@@ -15,7 +15,7 @@ local UserInputService = game:GetService("UserInputService")
 local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
-local CoreGuiService = game.Players.LocalPlayer.PlayerGui
+local CoreGuiService = game:GetService("CoreGui")
 local ContentService = game:GetService("ContentProvider")
 local TeleportService = game:GetService("TeleportService")
 
@@ -40,42 +40,43 @@ end
 -- / Dragging
 local drag = function(obj, latency)
 	obj = obj
-	latency = latency or 0.06
+    latency = latency or 0.06
 
-	toggled = nil
-	input = nil
-	start = nil
+    local toggled = false
+    local input = nil
+    local start = nil
+    local startPos = nil
 
-	function updateInput(input)
-		local Delta = input.Position - start
-		local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-		TweenService:Create(obj, TweenInfo.new(latency), {Position = Position}):Play()
-	end
+    local function updateInput(input)
+        local Delta = input.Position - start
+        local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+        obj.Position = Position
+    end
 
-	obj.InputBegan:Connect(function(inp)
-		if (inp.UserInputType == Enum.UserInputType.MouseButton1) then
-			toggled = true
-			start = inp.Position
-			startPos = obj.Position
-			inp.Changed:Connect(function()
-				if (inp.UserInputState == Enum.UserInputState.End) then
-					toggled = false
-				end
-			end)
-		end
-	end)
+    obj.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+            toggled = true
+            start = inp.Position
+            startPos = obj.Position
+            inp.Changed:Connect(function()
+                if inp.UserInputState == Enum.UserInputState.End then
+                    toggled = false
+                end
+            end)
+        end
+    end)
 
-	obj.InputChanged:Connect(function(inp)
-		if (inp.UserInputType == Enum.UserInputType.MouseMovement) then
-			input = inp
-		end
-	end)
+    obj.InputChanged:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseMovement or inp.UserInputType == Enum.UserInputType.Touch then
+            input = inp
+        end
+    end)
 
-	UserInputService.InputChanged:Connect(function(inp)
-		if (inp == input and toggled) then
-			updateInput(inp)
-		end
-	end)
+    UserInputService.InputChanged:Connect(function(inp)
+        if inp == input and toggled then
+            updateInput(inp)
+        end
+    end)
 end
 
 local library = {
@@ -908,7 +909,7 @@ function library:Init(key)
 	background.AnchorPoint = Vector2.new(0.5, 0.5)
 	background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	background.Position = UDim2.new(0.5, 0, 0.5, 0)
-	background.Size = UDim2.new(0, 542, 0, 347)
+	background.Size = UDim2.new(0, 592, 0, 404)
 	background.ClipsDescendants = true
 
 	backgroundCorner.CornerRadius = UDim.new(0, 2)
@@ -3385,7 +3386,7 @@ function library:Init(key)
 				end)
 
 				releaseconnection = UserInputService.InputEnded:Connect(function(Mouse_2)
-					if Mouse_2.UserInputType == Enum.UserInputType.MouseButton1 then
+					if Mouse_2.UserInputType == Enum.UserInputType.MouseButton1 or Mouse_2.UserInputType == Enum.UserInputType.Touch then
 						ValueNum = math.floor((((tonumber(values.max) - tonumber(values.min)) / sliderBackground.AbsoluteSize.X) * sliderIndicator.AbsoluteSize.X) + tonumber(values.min))
 
 						slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
