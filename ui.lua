@@ -908,7 +908,7 @@ function library:Init(key)
 	background.AnchorPoint = Vector2.new(0.5, 0.5)
 	background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	background.Position = UDim2.new(0.5, 0, 0.5, 0)
-	background.Size = UDim2.new(0, 592, 0, 404)
+	background.Size = UDim2.new(0, 542, 0, 347)
 	background.ClipsDescendants = true
 
 	backgroundCorner.CornerRadius = UDim.new(0, 2)
