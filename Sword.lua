@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "0.1 Alpha",
+	Version = "0.2 Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -21,7 +21,7 @@ local library
 if game:GetService("RunService"):IsStudio() then
 	library = require(script:WaitForChild("UI"))
 else
-	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Consistt/Ui/main/UnLeaked"))()
+	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/ui.lua"))()
 end
 
 library.rank = "unknown"
@@ -236,7 +236,7 @@ function CreateFakeCharacter()
 	return Model0
 end
 
--- Verify Tab
+--[[ Verify Tab
 local VerifyTab = Init:NewTab("Verify")
 local VerifySection = VerifyTab:NewSection("Token")
 
@@ -267,7 +267,7 @@ VerifyTab:NewButton("Enter", function(value)
 		end
 	end
 end)
-
+]]
 -- Home Tab
 local HomeTab = Init:NewTab("Home")
 local HomeSection = HomeTab:NewSection("Dashboard")
@@ -289,7 +289,7 @@ AnimateClone.Parent = FakeCharacter
 
 local RecommendedCharacter = FakeCharacter
 
-
+startup()
 
 function startup()
 	-- Scripts Tab
