@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "0.1hh Alpha",
+	Version = "0.1hhhh Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -235,8 +235,6 @@ function CreateFakeCharacter()
 	return Model0
 end
 
-
-library:UpdateKeybind(Enum.KeyCode.LeftControl)
 
 
 --[[ Verify Tab
