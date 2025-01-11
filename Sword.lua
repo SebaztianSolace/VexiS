@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "0.1hhhh Alpha",
+	Version = "1.0 Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -21,7 +21,7 @@ local library
 if game:GetService("RunService"):IsStudio() then
 	library = require(script:WaitForChild("UI"))
 else
-	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Consistt/Ui/main/UnLeaked"))()
+	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/ui.lua"))()
 end
 library.rank = "tester"
 
@@ -236,7 +236,6 @@ function CreateFakeCharacter()
 end
 
 
-
 --[[ Verify Tab
 local VerifyTab = Init:NewTab("Verify")
 local VerifySection = VerifyTab:NewSection("Token")
@@ -276,13 +275,29 @@ local Label1 = HomeTab:NewLabel("Welcome to VexiS!, " .. game.Players.LocalPlaye
 local Label2 = HomeTab:NewLabel("Enjoy using this ui, I put alot of work in here.", "left")
 local Label3 = HomeTab:NewLabel("Rank: " .. library.rank, "left")
 
+
+
 local RespawnPos = false
+
 local SwordBot = false
+
 local KillAuraDis = 12
+
 local SwordBotDis = 15
+
+local Srafe = false
+
 local KillAura = false
 
+local LoopKill = false
+
+
+
 local TargetUser = ""
+
+local TargetPlayerIs = nil
+
+
 
 local FakeCharacter = CreateFakeCharacter()
 FakeCharacter.HumanoidRootPart.Anchored = true
@@ -315,6 +330,17 @@ local SwordBotSlider = ScriptsTab:NewSlider("SwordBot Distance", " Studs", true,
 	SwordBotDis = value
 end)
 
+local ScriptsSection1 = ScriptsTab:NewSection("Movement")
+
+-- Speed
+local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed", " Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
+	Character.Humanoid.WalkSpeed = value
+end)
+
+-- srafe
+local SrafeToggle = ScriptsTab:NewToggle("Srafe", false, function(value)
+	Srafe = value
+end)
 
 -- Overpowered Tab
 local OverpoweredTab = Init:NewTab("Overpowered")
@@ -322,6 +348,12 @@ local OverpoweredSection = OverpoweredTab:NewSection("Players")
 
 OverpoweredTab:NewTextbox("Target User", "", "Display Name Or User Name", "all", "medium", true, true, function(value)
 	TargetUser = value
+	for i,v in pairs(game.Players:GetChildren()) do
+		if string.lower(v.Name) == string.lower(value) or string.lower(v.DisplayName) == string.lower(value) then
+			TargetPlayerIs = v
+			break
+		end
+	end
 	warn(value)
 end)
 
@@ -334,24 +366,78 @@ OverpoweredTab:NewButton("Fling User", function(value)
 		end
 	end
 	if FoundUser ~= false then
+		local Head = FoundUser.Character:FindFirstChild("Head")
+		if not Head then
+			Notif:Notify("Is " .. TargetUser .. " Loaded in?", 4, "error") -- notification, alert, error, success, information
+			return
+		end
 		Notif:Notify("Found " .. TargetUser .. ".", 3, "information") -- notification, alert, error, success, information
 		local oldcf = Character.Head.CFrame
 		local a = -1
 		repeat
 			a = a + 1
 			Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,9000,0)
-			Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(900,900,900)
 			Character.HumanoidRootPart.CFrame = FoundUser.Character.HumanoidRootPart.CFrame * CFrame.new(0,-1.5,0)
 			game["Run Service"].Heartbeat:Wait()
-		until a > 25
+		until a > 120 or FoundUser.Character.Head.AssemblyLinearVelocity.Y > 120
 		Character.Head.CFrame = oldcf
 		Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
 		Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(0,0,0)
-		Notif:Notify("Flung " .. TargetUser .. ".", 3, "success") -- notification, alert, error, success, information
+		if a < 119.9 then
+			Notif:Notify("Flung " .. TargetUser .. ".", 3, "success") -- notification, alert, error, success, information
+		else
+			Notif:Notify("Maybe flung, " .. TargetUser .. ".", 3, "alert") -- notification, alert, error, success, information
+		end
 	else
 		Notif:Notify("Was unable to find " .. TargetUser .. ", Are you sure you spelled their username or display name correctly?", 3, "alert") -- notification, alert, error, success, information
 	end
 end)
+
+OverpoweredTab:NewButton("Temp Gameplay Pause User", function(value)
+	local FoundUser = false
+	for i,v in pairs(game.Players:GetChildren()) do
+		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
+			FoundUser = v
+			break
+		end
+	end
+	if FoundUser ~= false then
+		local Head = FoundUser.Character:FindFirstChild("Head")
+		if not Head then
+			Notif:Notify("Is " .. TargetUser .. " Loaded in?", 4, "error") -- notification, alert, error, success, information
+			return
+		end
+		Notif:Notify("Found " .. TargetUser .. ".", 3, "information") -- notification, alert, error, success, information
+		local oldcf = Character.Head.CFrame
+		local a = -1
+		repeat
+			a = a + 1
+			if not Character:FindFirstChildOfClass("Tool") then
+				Character.Humanoid:EquipTool(Player.Backpack:FindFirstChildOfClass("Tool"))
+			end
+			local Item = Character:FindFirstChildOfClass("Tool")
+			Item.Handle:BreakJoints()
+			Item.Handle.CFrame = FoundUser.Character.Head.CFrame
+			Item:Activate()
+			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-5500,math.random(-50,50))
+			Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,17000,0)
+			Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(math.random(-3500,3500),math.random(-3500,3500),math.random(-3500,3500))
+			Character.HumanoidRootPart.CFrame = FoundUser.Character.HumanoidRootPart.CFrame * CFrame.new(0,-1.25,0)
+			game["Run Service"].Heartbeat:Wait()
+		until a > 150 or FoundUser.Character.Head.AssemblyLinearVelocity.Y > 650
+		Character.Head.CFrame = oldcf
+		Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
+		Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(0,0,0)
+		if a < 149.9 then
+			Notif:Notify("Paused " .. TargetUser .. "'s Game.", 3, "success") -- notification, alert, error, success, information
+		else
+			Notif:Notify("Most likely didn't Pause " .. TargetUser .. "'s Game.", 3, "alert") -- notification, alert, error, success, information
+		end
+	else
+		Notif:Notify("Was unable to find " .. TargetUser .. ", Are you sure you spelled their username or display name correctly?", 3, "alert") -- notification, alert, error, success, information
+	end
+end)
+
 OverpoweredTab:NewButton("Kill User", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
@@ -361,6 +447,11 @@ OverpoweredTab:NewButton("Kill User", function(value)
 		end
 	end
 	if FoundUser ~= false then
+		local Head = FoundUser.Character:FindFirstChild("Head")
+		if not Head then
+			Notif:Notify("Is " .. TargetUser .. " Loaded in?", 4, "error") -- notification, alert, error, success, information
+			return
+		end
 		Notif:Notify("Found " .. TargetUser .. ".", 3, "information") -- notification, alert, error, success, information
 		repeat
 			if not Character:FindFirstChildOfClass("Tool") then
@@ -380,6 +471,9 @@ OverpoweredTab:NewButton("Kill User", function(value)
 	end
 end)
 
+OverpoweredTab:NewToggle("Loop Kill User", false, function(value)
+	LoopKill = value
+end)
 
 
 -- Mods Tab
@@ -736,6 +830,24 @@ swordbotpart.CastShadow = false
 
 
 game["Run Service"].RenderStepped:Connect(function()
+	if LoopKill then
+		if TargetPlayerIs.Character.Humanoid.Health > 0.01 then
+			wait(0.15)
+			local Item = Character:FindFirstChildOfClass("Tool")
+			if not Item then
+				Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
+				Item = Character:FindFirstChildOfClass("Tool")
+			end
+			Item.Handle:BreakJoints()
+			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+			Item.Handle.CFrame = TargetPlayerIs.Character.Head.CFrame
+			Item:Activate()
+		else
+			if Character:FindFirstChildOfClass("Tool") then
+				Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+			end
+		end
+	end
 	if SwordBot then
 		swordbotpart.Parent = workspace
 		swordbotpart.Size = Vector3.new(0.5,SwordBotDis,SwordBotDis)
@@ -826,6 +938,9 @@ game["Run Service"].Heartbeat:Connect(function()
 			Item.Handle.Material = Enum.Material.Plastic
 		end
 		Character.Humanoid.AutoRotate = true
+	end
+	if Srafe then
+		Character.HumanoidRootPart.Velocity = Vector3.new(Character:FindFirstChildOfClass("Humanoid").MoveDirection.X * Character:FindFirstChildOfClass("Humanoid").WalkSpeed,Character.HumanoidRootPart.Velocity.Y,Character:FindFirstChildOfClass("Humanoid").MoveDirection.Z * Character:FindFirstChildOfClass("Humanoid").WalkSpeed)
 	end
 end)
 
