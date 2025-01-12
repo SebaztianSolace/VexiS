@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "1.1 Alpha",
+	Version = "1.2 Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -263,6 +263,8 @@ local SwordBotDis = 15
 local Srafe = false
 local KillAura = false
 local LoopKill = false
+local LoopKillAll = false
+local VesiXT = false
 
 local TargetUser = ""
 local TargetPlayerIs = nil
@@ -297,7 +299,7 @@ end)
 
 
 -- KillAura Distance Slider
-local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", "Studs", true, "/", {min = 10.0, max = 120.0, default = 12}, function(value)
+local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", " Studs", true, "/", {min = 10.0, max = 480.0, default = 12}, function(value)
 	KillAuraDis = value
 end)
 
@@ -314,7 +316,7 @@ end)
 local ScriptsSection1 = ScriptsTab:NewSection("Movement")
 
 -- WalkSpeed Slider
-local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", "Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
+local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", " Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
 	Character.Humanoid.WalkSpeed = value
 end)
 
@@ -451,6 +453,7 @@ OverpoweredTab:NewToggle("<b>Loop Kill User</b> <font color='#8A2BE2'>[Traceable
 	LoopKill = value
 end)
 
+local BlankLabel = OverpoweredTab:NewLabel("-------", "middle")
 
 -- Banish/Void User Button
 OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Detected]</font>", function(value)
@@ -490,6 +493,12 @@ OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Detected]<
 	end
 end)
 
+local tarcf = CFrame.new(0,50,0)
+
+OverpoweredTab:NewToggle("<b>Loop Kill Everyone</b> <font color='#FF0000'>[Bannable]</font>", false, function(value)
+	LoopKillAll = value
+end)
+
 
 -- Mods Tab
 local ModsTab = Init:NewTab("Mods")
@@ -500,6 +509,12 @@ local RespawnToggle = ModsTab:NewToggle("Respawn at Death Point <font color='#FF
 	RespawnPos = value
 end)
 
+-- VesiX Character Toggle
+local VesiXnToggle = ModsTab:NewToggle("VesiX Skin [Character, Client]", false, function(value)
+	VesiXT = value
+end)
+
+local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
 
 --[[ Settings Tab
 local SettingTab = Init:NewTab("Settings")
@@ -511,6 +526,7 @@ Notif:Notify("<font color='#8A2BE2'>VexiS</font> Visual's has successfully loade
 
 local attackinghighlight = Instance.new("Highlight")
 attackinghighlight.Parent = game
+attackinghighlight.FillColor = Color3.fromRGB(128 * 1.5,0,255)
 
 
 local killaurapart = Instance.new("Part")
@@ -533,11 +549,34 @@ swordbotpart.CastShadow = false
 
 
 game["Run Service"].RenderStepped:Connect(function()
+	if LoopKillAll then
+		for i,v in pairs(game.Players:GetChildren()) do
+			if v ~= Player then
+				local c = v.Character::Model
+				if c:FindFirstChild("Head") then
+					c.Head.Anchored = true
+					c.Head.CFrame = tarcf
+				else
+					Notif:Notify("Cannot Kill " .. v.Name, 4, "alert")
+				end
+			end
+		end
+		if not Character:FindFirstChildOfClass("Tool") then
+			wait(0.1)
+			Character.Humanoid:EquipTool(Player.Backpack:FindFirstChildOfClass("Tool"))
+		end
+		local Item = Character:FindFirstChildOfClass("Tool")
+		Item.Handle:BreakJoints()
+		Item.Handle.CFrame = tarcf
+		Item:Activate()
+		Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+	end
 	if LoopKill then
 		if TargetPlayerIs.Character.Humanoid.Health > 0.01 then
 			wait(0.15)
 			local Item = Character:FindFirstChildOfClass("Tool")
 			if not Item then
+				wait(0.1)
 				Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
 				Item = Character:FindFirstChildOfClass("Tool")
 			end
@@ -564,6 +603,23 @@ game["Run Service"].RenderStepped:Connect(function()
 		killaurapart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0) * CFrame.Angles(0,0,math.rad(90))
 	else
 		killaurapart.Parent = game
+	end
+	if VesiXT then
+		for i,v in pairs(Character:GetChildren()) do
+			if v:IsA("Part") then
+				v.Material = Enum.Material.ForceField
+				v.Color = Color3.fromRGB(128 * 1.25,0,255)
+				v.LocalTransparencyModifier = 0.25
+				if v.Name == "Head" and v:FindFirstChild("face") then
+					v.face:Destroy()
+				end
+			end
+			if v:IsA("Accessory") then
+				v.Handle.Material = Enum.Material.ForceField
+				v.Handle.Color = Color3.fromRGB(128 * 1.25,0,255)
+				v.Handle.LocalTransparencyModifier = 0.25
+			end
+		end
 	end
 end)
 
@@ -593,6 +649,7 @@ game["Run Service"].Heartbeat:Connect(function()
 				end
 			end
 		else
+			wait(0.1)
 			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
 		end
 	else
@@ -633,6 +690,7 @@ game["Run Service"].Heartbeat:Connect(function()
 				end
 			end
 		else
+			wait(0.1)
 			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
 		end
 	else
