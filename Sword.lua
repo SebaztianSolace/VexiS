@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "1.0 Alpha",
+	Version = "1.1 Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -23,7 +23,7 @@ if game:GetService("RunService"):IsStudio() then
 else
 	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/ui.lua"))()
 end
-library.rank = "tester"
+library.rank = "Free Access"
 
 local Wm = library:Watermark("VexiS | v" .. _G.Config.Version ..  " | " .. library:GetUsername() .. " | Rank: " .. library.rank)
 local FpsWm = Wm:AddWatermark("fps: " .. library.fps)
@@ -38,7 +38,8 @@ end)()
 
 local Notif = library:InitNotifications()
 
-local LoadingXSX = Notif:Notify("VexiS is loading, Please Wait.", 3, "information") -- notification, alert, error, success, information
+local LoadingXSX = Notif:Notify("<font color='#8A2BE2'>VexiS</font> is loading, Please wait...", 3, "information")
+
 
 for i = 20,0,-1 do 
 	task.wait(0.05)
@@ -235,69 +236,36 @@ function CreateFakeCharacter()
 	return Model0
 end
 
-
---[[ Verify Tab
-local VerifyTab = Init:NewTab("Verify")
-local VerifySection = VerifyTab:NewSection("Token")
-
-VerifyTab:NewLabel("Please enter your token/key into the textbox below.", "left")
---n0crvqhkffHMR
-
-local Key = "nuh uh"
-
-VerifyTab:NewTextbox("Token", "", "a1b2C3d4E5", "all", "medium", true, true, function(value)
-	Key = value
-end)
-
-VerifyTab:NewButton("Enter", function(value)
-	if game["Run Service"]:IsStudio() then
-		local Bind = game.ReplicatedStorage:WaitForChild("Yes")::RemoteFunction
-		local Data = Bind:InvokeServer(Key)
-		if Data.own == true then
-			library.rank = Data.rank
-			startup()
-			VerifyTab:Remove()
-		end
-	else
-		local Data = loadstring(game:HttpGet("https://nominally-right-swine.ngrok-free.app/get?t=" .. Key))()
-		if Data.own == true then
-			library.rank = Data.rank
-			startup()
-			VerifyTab:Remove()
-		end
-	end
-end)
-]]
 -- Home Tab
 local HomeTab = Init:NewTab("Home")
 local HomeSection = HomeTab:NewSection("Dashboard")
-local Label1 = HomeTab:NewLabel("Welcome to VexiS!, " .. game.Players.LocalPlayer.DisplayName, "left")
-local Label2 = HomeTab:NewLabel("Enjoy using this ui, I put alot of work in here.", "left")
+local Label1 = HomeTab:NewLabel("Welcome to VexiS! " .. game.Players.LocalPlayer.DisplayName, "left")
+local Label2 = HomeTab:NewLabel("Enjoy using this UI. I’ve put a lot of work into this.", "left")
 local Label3 = HomeTab:NewLabel("Rank: " .. library.rank, "left")
 
-
+local InsightsTab = Init:NewTab("Insights")
+local InsightsSection = InsightsTab:NewSection("Detection Insights")
+local TraceableLabel = InsightsTab:NewLabel("<b>Traceable</b> <font color='#800080'>[Traceable]</font> - A mix between Detected and Bannable. They will find out who is doing that.", "left")
+local DetectedLabel = InsightsTab:NewLabel("<b>Detected</b> <font color='#FFA500'>[Detected]</font> - People will notice, and if there's an anti-cheat, it will most likely detect you.", "left")
+local BannableLabel = InsightsTab:NewLabel("<b>Bannable</b> <font color='#FF0000'>[Bannable]</font> - Staff or anti-cheat will catch you and most likely ban you.", "left")
+local RiskyLabel = InsightsTab:NewLabel("<b>Risky</b> <font color='#FF5733'>[Risky]</font> - People will find out who is hacking and most likely report you.", "left")
+local UndetectedLabel = InsightsTab:NewLabel("<b>Undetected</b> <font color='#32CD32'>[Undetected]</font> - People will and won't find out that you're hacking.", "left")
+local AdditionalInfoSection = InsightsTab:NewSection("Additional Information")
+local BlankLabel = InsightsTab:NewLabel(" ", "left")
+local AdditionalInfoLabel = InsightsTab:NewLabel("Use these detection levels to understand the risks of each action. Some actions are riskier than others and could lead to bans or detection. Always be cautious.", "left")
+local BlankLabel = InsightsTab:NewLabel(" ", "left")
+local DisclaimerLabel = InsightsTab:NewLabel("<b>Disclaimer:</b> <font color='#FF6347'>[Notice]</font> - I'm not responsible for any bans caused. It is recommended to use an alternate account.", "left")
 
 local RespawnPos = false
-
 local SwordBot = false
-
 local KillAuraDis = 12
-
 local SwordBotDis = 15
-
 local Srafe = false
-
 local KillAura = false
-
 local LoopKill = false
 
-
-
 local TargetUser = ""
-
 local TargetPlayerIs = nil
-
-
 
 local FakeCharacter = CreateFakeCharacter()
 FakeCharacter.HumanoidRootPart.Anchored = true
@@ -305,43 +273,55 @@ AnimateClone.Parent = FakeCharacter
 
 local RecommendedCharacter = FakeCharacter
 
-
 -- Scripts Tab
 local ScriptsTab = Init:NewTab("Scripts")
 local ScriptsSection = ScriptsTab:NewSection("Combat")
 
+
+--[[
+Rich Text Formatting Guide:
+
+- **Bannable** (Pure Red): <font color='#FF0000'>[Bannable]</font>
+- **Detected** (FFA500): <font color='#FFA500'>[Detected]</font>
+- **Risky** (Future Red): <font color='#FF5733'>[Risky]</font>
+- **Traceable** (Bright Purple): <font color='#8A2BE2'>[Traceable]</font>
+- **Noticeable** (Future Orange): <font color='#FFA500'>[Noticeable]</font>
+- **Undetected** (Future Green): <font color='#32CD32'>[Undetected]</font>
+]]
+
+
 -- KillAura Toggle
-local KillAuraToggle = ScriptsTab:NewToggle("KillAura [Risky]", false, function(value)
+local KillAuraToggle = ScriptsTab:NewToggle('KillAura <font color="#8A2BE2">[Traceable]</font>', false, function(value)
 	KillAura = value
 end)
 
+
 -- KillAura Distance Slider
-local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", " Studs", true, "/", {min = 10.0, max = 120.0, default = 12}, function(value)
+local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", "Studs", true, "/", {min = 10.0, max = 120.0, default = 12}, function(value)
 	KillAuraDis = value
 end)
 
 -- SwordBot Toggle
-local SwordBotToggle = ScriptsTab:NewToggle("SwordBot", false, function(value)
+local SwordBotToggle = ScriptsTab:NewToggle("SwordBot <font color='#32CD32'>[Undetected]</font>", false, function(value)
 	SwordBot = value
 end)
 
--- KillAura Distance Slider
-local SwordBotSlider = ScriptsTab:NewSlider("SwordBot Distance", " Studs", true, "/", {min = 10.0, max = 25.0, default = 15}, function(value)
+-- SwordBot Distance Slider
+local SwordBotSlider = ScriptsTab:NewSlider("SwordBot Distance", "Studs", true, "/", {min = 10.0, max = 25.0, default = 15}, function(value)
 	SwordBotDis = value
 end)
 
 local ScriptsSection1 = ScriptsTab:NewSection("Movement")
 
--- Speed
-local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed", " Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
+-- WalkSpeed Slider
+local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", "Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
 	Character.Humanoid.WalkSpeed = value
 end)
 
--- srafe
-local SrafeToggle = ScriptsTab:NewToggle("Srafe", false, function(value)
+-- Strafe Toggle
+local SrafeToggle = ScriptsTab:NewToggle("Strafe <font color='#32CD32'>[Undetected]</font>", false, function(value)
 	Srafe = value
 end)
-
 -- Overpowered Tab
 local OverpoweredTab = Init:NewTab("Overpowered")
 local OverpoweredSection = OverpoweredTab:NewSection("Players")
@@ -356,8 +336,8 @@ OverpoweredTab:NewTextbox("Target User", "", "Display Name Or User Name", "all",
 	end
 	warn(value)
 end)
-
-OverpoweredTab:NewButton("Fling User", function(value)
+-- Fling User Button
+OverpoweredTab:NewButton("<b>Fling User</b> <font color='#FFA500'>[Detected]</font>", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
 		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
@@ -393,7 +373,10 @@ OverpoweredTab:NewButton("Fling User", function(value)
 	end
 end)
 
-OverpoweredTab:NewButton("Temp Gameplay Pause User", function(value)
+
+
+-- Banish/Void User Button
+OverpoweredTab:NewButton("<b>Banish/Void User</b> <font color='#FFA500'>[Detected]</font>", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
 		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
@@ -412,33 +395,25 @@ OverpoweredTab:NewButton("Temp Gameplay Pause User", function(value)
 		local a = -1
 		repeat
 			a = a + 1
-			if not Character:FindFirstChildOfClass("Tool") then
-				Character.Humanoid:EquipTool(Player.Backpack:FindFirstChildOfClass("Tool"))
-			end
-			local Item = Character:FindFirstChildOfClass("Tool")
-			Item.Handle:BreakJoints()
-			Item.Handle.CFrame = FoundUser.Character.Head.CFrame
-			Item:Activate()
-			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-5500,math.random(-50,50))
-			Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,17000,0)
-			Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(math.random(-3500,3500),math.random(-3500,3500),math.random(-3500,3500))
+			Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,-12000,0)
 			Character.HumanoidRootPart.CFrame = FoundUser.Character.HumanoidRootPart.CFrame * CFrame.new(0,-1.25,0)
 			game["Run Service"].Heartbeat:Wait()
-		until a > 150 or FoundUser.Character.Head.AssemblyLinearVelocity.Y > 650
+		until a > 150 or FoundUser.Character.Head.AssemblyLinearVelocity.Y < -50
 		Character.Head.CFrame = oldcf
 		Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
 		Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.new(0,0,0)
 		if a < 149.9 then
-			Notif:Notify("Paused " .. TargetUser .. "'s Game.", 3, "success") -- notification, alert, error, success, information
+			Notif:Notify("Voided/Banished " .. TargetUser .. ".", 3, "success") -- notification, alert, error, success, information
 		else
-			Notif:Notify("Most likely didn't Pause " .. TargetUser .. "'s Game.", 3, "alert") -- notification, alert, error, success, information
+			Notif:Notify("Most likely didn't Banish/Voided " .. TargetUser .. ".", 3, "alert") -- notification, alert, error, success, information
 		end
 	else
 		Notif:Notify("Was unable to find " .. TargetUser .. ", Are you sure you spelled their username or display name correctly?", 3, "alert") -- notification, alert, error, success, information
 	end
 end)
 
-OverpoweredTab:NewButton("Kill User", function(value)
+-- Kill User Button
+OverpoweredTab:NewButton("<b>Kill User</b> <font color='#FFA500'>[Detected?]</font>", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
 		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
@@ -471,8 +446,48 @@ OverpoweredTab:NewButton("Kill User", function(value)
 	end
 end)
 
-OverpoweredTab:NewToggle("Loop Kill User", false, function(value)
+-- Loop Kill User Toggle
+OverpoweredTab:NewToggle("<b>Loop Kill User</b> <font color='#8A2BE2'>[Traceable]</font>", false, function(value)
 	LoopKill = value
+end)
+
+
+-- Banish/Void User Button
+OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Detected]</font>", function(value)
+	for i,v in pairs(game.Players:GetChildren()) do
+		if v ~= Player then
+			local c = v.Character::Model
+			if c:FindFirstChild("Head") then
+				c.Head.Anchored = true
+				c.Head.CFrame = Character.Head.CFrame * CFrame.new(0,20,0)
+			else
+				Notif:Notify("Cannot Kill " .. v.Name, 4, "alert")
+			end
+		end
+	end
+	local targetcf = Character.Head.CFrame * CFrame.new(0,20,0)
+	local a = -1
+	repeat
+		a = a + 1
+		if not Character:FindFirstChildOfClass("Tool") then
+			Character.Humanoid:EquipTool(Player.Backpack:FindFirstChildOfClass("Tool"))
+		end
+		local Item = Character:FindFirstChildOfClass("Tool")
+		Item.Handle:BreakJoints()
+		Item.Handle.CFrame = targetcf
+		Item:Activate()
+		Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+		game["Run Service"].Heartbeat:Wait()
+	until a > 60
+	Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+	for i,v in pairs(game.Players:GetChildren()) do
+		if v ~= Player then
+			local c = v.Character::Model
+			if c:FindFirstChild("Head") then
+				c.Head.Anchored = false
+			end
+		end
+	end
 end)
 
 
@@ -481,13 +496,179 @@ local ModsTab = Init:NewTab("Mods")
 local ModsSection = ModsTab:NewSection("Character")
 
 -- Respawn Toggle
-local RespawnToggle = ModsTab:NewToggle("Respawn at Death Point", false, function(value)
+local RespawnToggle = ModsTab:NewToggle("Respawn at Death Point <font color='#FFA500'>[Detected]</font>", false, function(value)
 	RespawnPos = value
 end)
 
--- Settings Tab
+
+--[[ Settings Tab
 local SettingTab = Init:NewTab("Settings")
 local SettingsSection = SettingTab:NewSection("Settings")
+]]
+
+
+Notif:Notify("<font color='#8A2BE2'>VexiS</font> Visual's has successfully loaded!", 4, "success")
+
+local attackinghighlight = Instance.new("Highlight")
+attackinghighlight.Parent = game
+
+
+local killaurapart = Instance.new("Part")
+killaurapart.Shape = Enum.PartType.Cylinder
+killaurapart.Size = Vector3.new(8,8,0.5)
+killaurapart.CanCollide = false
+killaurapart.Material = Enum.Material.ForceField
+killaurapart.Color = Color3.fromRGB(128 * 1.25,0,255)
+killaurapart.Anchored = true
+killaurapart.CastShadow = false
+
+local swordbotpart = Instance.new("Part")
+swordbotpart.Shape = Enum.PartType.Cylinder
+swordbotpart.Size = Vector3.new(0.5,15,15)
+swordbotpart.CanCollide = false
+swordbotpart.Material = Enum.Material.ForceField
+swordbotpart.Color = Color3.fromRGB(255,0,0)
+swordbotpart.Anchored = true
+swordbotpart.CastShadow = false
+
+
+game["Run Service"].RenderStepped:Connect(function()
+	if LoopKill then
+		if TargetPlayerIs.Character.Humanoid.Health > 0.01 then
+			wait(0.15)
+			local Item = Character:FindFirstChildOfClass("Tool")
+			if not Item then
+				Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
+				Item = Character:FindFirstChildOfClass("Tool")
+			end
+			Item.Handle:BreakJoints()
+			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+			Item.Handle.CFrame = TargetPlayerIs.Character.Head.CFrame
+			Item:Activate()
+		else
+			if Character:FindFirstChildOfClass("Tool") then
+				Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+			end
+		end
+	end
+	if SwordBot then
+		swordbotpart.Parent = workspace
+		swordbotpart.Size = Vector3.new(0.5,SwordBotDis,SwordBotDis)
+		swordbotpart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0) * CFrame.Angles(0,0,math.rad(90))
+	else
+		swordbotpart.Parent = game
+	end
+	if KillAura then
+		killaurapart.Parent = workspace
+		killaurapart.Size = Vector3.new(0.5,KillAuraDis,KillAuraDis)
+		killaurapart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0) * CFrame.Angles(0,0,math.rad(90))
+	else
+		killaurapart.Parent = game
+	end
+end)
+
+game["Run Service"].Heartbeat:Connect(function()
+	if KillAura then
+		attackinghighlight.Parent = game
+		Character.Animate.toolnone.ToolNoneAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
+		local Item = Character:FindFirstChildOfClass("Tool")
+		if Item then
+			Item.Handle.Material = Enum.Material.ForceField
+			Item.Handle.Color = Color3.fromRGB(176, 156, 255)
+			Item.Handle:BreakJoints()
+			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
+			for i,v in pairs(game.Players:GetChildren()) do
+				if v:IsA("Player") then
+					if v.Character ~= Character then
+						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
+							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
+								Item.Handle.CFrame = v.Character.Head.CFrame
+								Item:Activate()
+								attackinghighlight.Parent = v.Character
+								break
+							end
+						end
+					end
+				end
+			end
+		else
+			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
+		end
+	else
+		local Item = Character:FindFirstChildOfClass("Tool")
+		attackinghighlight.Parent = game
+		if Item and not SwordBot then
+			Item.Handle.Material = Enum.Material.Plastic
+		end
+		Character.Animate.toolnone.ToolNoneAnim.AnimationId = "http://www.roblox.com/asset/?id=182393478"
+		local Item = Character:FindFirstChildOfClass("Tool")
+	end
+	if SwordBot then
+		local Item = Character:FindFirstChildOfClass("Tool")
+		if Item then
+			Item.Handle.Material = Enum.Material.ForceField
+			Item.Handle.Color = Color3.fromRGB(176, 156, 255)
+			Character.Humanoid.AutoRotate = true
+			Item.Handle:BreakJoints()
+			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
+			for i,v in pairs(game.Players:GetChildren()) do
+				if v:IsA("Player") then
+					if v.Character ~= Character then
+						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
+							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
+								Character.Humanoid.AutoRotate = false
+								Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.25)
+							end
+							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
+								Item.Handle.CFrame = v.Character.Head.CFrame
+								if math.random(1,11) == 1 then
+									Item:Activate()
+								end
+								break
+							end
+						end
+					end
+				end
+			end
+		else
+			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
+		end
+	else
+		local Item = Character:FindFirstChildOfClass("Tool")
+		if Item and not KillAura then
+			Item.Handle.Material = Enum.Material.Plastic
+		end
+		Character.Humanoid.AutoRotate = true
+	end
+	if Srafe then
+		Character.HumanoidRootPart.Velocity = Vector3.new(Character:FindFirstChildOfClass("Humanoid").MoveDirection.X * Character:FindFirstChildOfClass("Humanoid").WalkSpeed,Character.HumanoidRootPart.Velocity.Y,Character:FindFirstChildOfClass("Humanoid").MoveDirection.Z * Character:FindFirstChildOfClass("Humanoid").WalkSpeed)
+	end
+end)
+
+local Pos = Character.HumanoidRootPart.CFrame
+Player.CharacterAdded:Connect(function(Model)
+	Model:WaitForChild("Humanoid").Died:Connect(function()
+		Pos = Model.Head.CFrame
+	end)
+	if Model ~= FakeCharacter then
+		Character = Model
+		if RespawnPos and Pos ~= nil then
+			Character.HumanoidRootPart.CFrame = Pos
+		end
+		if RecommendedCharacter ~= FakeCharacter then
+			RecommendedCharacter = Character
+		end
+	end
+end)
+
+Notif:Notify("<font color='#8A2BE2'>VexiS</font> Background Script's has successfully loaded!", 5.65, "success")
+
+
+
+
+
 
 
 -- // FUNCTION DOCS: 
@@ -801,165 +982,3 @@ local SettingsSection = SettingTab:NewSection("Settings")
     -- / library:PromptDiscord("invite")
     -- invites you to a discord
 ]]
-
-
-local FinishedLoading = Notif:Notify("VexiS Visual's has Loaded", 4, "success")
-
-
-local attackinghighlight = Instance.new("Highlight")
-attackinghighlight.Parent = game
-
-
-local killaurapart = Instance.new("Part")
-killaurapart.Shape = Enum.PartType.Cylinder
-killaurapart.Size = Vector3.new(8,8,0.5)
-killaurapart.CanCollide = false
-killaurapart.Material = Enum.Material.ForceField
-killaurapart.Color = Color3.fromRGB(128 * 1.25,0,255)
-killaurapart.Anchored = true
-killaurapart.CastShadow = false
-
-local swordbotpart = Instance.new("Part")
-swordbotpart.Shape = Enum.PartType.Cylinder
-swordbotpart.Size = Vector3.new(0.5,15,15)
-swordbotpart.CanCollide = false
-swordbotpart.Material = Enum.Material.ForceField
-swordbotpart.Color = Color3.fromRGB(255,0,0)
-swordbotpart.Anchored = true
-swordbotpart.CastShadow = false
-
-
-game["Run Service"].RenderStepped:Connect(function()
-	if LoopKill then
-		if TargetPlayerIs.Character.Humanoid.Health > 0.01 then
-			wait(0.15)
-			local Item = Character:FindFirstChildOfClass("Tool")
-			if not Item then
-				Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
-				Item = Character:FindFirstChildOfClass("Tool")
-			end
-			Item.Handle:BreakJoints()
-			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
-			Item.Handle.CFrame = TargetPlayerIs.Character.Head.CFrame
-			Item:Activate()
-		else
-			if Character:FindFirstChildOfClass("Tool") then
-				Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
-			end
-		end
-	end
-	if SwordBot then
-		swordbotpart.Parent = workspace
-		swordbotpart.Size = Vector3.new(0.5,SwordBotDis,SwordBotDis)
-		swordbotpart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0) * CFrame.Angles(0,0,math.rad(90))
-	else
-		swordbotpart.Parent = game
-	end
-	if KillAura then
-		killaurapart.Parent = workspace
-		killaurapart.Size = Vector3.new(0.5,KillAuraDis,KillAuraDis)
-		killaurapart.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,-3,0) * CFrame.Angles(0,0,math.rad(90))
-	else
-		killaurapart.Parent = game
-	end
-end)
-
-game["Run Service"].Heartbeat:Connect(function()
-	if KillAura then
-		attackinghighlight.Parent = game
-		Character.Animate.toolnone.ToolNoneAnim.AnimationId = "http://www.roblox.com/asset/?id=0"
-		local Item = Character:FindFirstChildOfClass("Tool")
-		if Item then
-			Item.Handle.Material = Enum.Material.ForceField
-			Item.Handle.Color = Color3.fromRGB(176, 156, 255)
-			Item.Handle:BreakJoints()
-			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
-			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
-			for i,v in pairs(game.Players:GetChildren()) do
-				if v:IsA("Player") then
-					if v.Character ~= Character then
-						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
-								Item.Handle.CFrame = v.Character.Head.CFrame
-								Item:Activate()
-								attackinghighlight.Parent = v.Character
-								break
-							end
-						end
-					end
-				end
-			end
-		else
-			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
-		end
-	else
-		local Item = Character:FindFirstChildOfClass("Tool")
-		attackinghighlight.Parent = game
-		if Item and not SwordBot then
-			Item.Handle.Material = Enum.Material.Plastic
-		end
-		Character.Animate.toolnone.ToolNoneAnim.AnimationId = "http://www.roblox.com/asset/?id=182393478"
-		local Item = Character:FindFirstChildOfClass("Tool")
-	end
-	if SwordBot then
-		local Item = Character:FindFirstChildOfClass("Tool")
-		if Item then
-			Item.Handle.Material = Enum.Material.ForceField
-			Item.Handle.Color = Color3.fromRGB(176, 156, 255)
-			Character.Humanoid.AutoRotate = true
-			Item.Handle:BreakJoints()
-			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
-			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
-			for i,v in pairs(game.Players:GetChildren()) do
-				if v:IsA("Player") then
-					if v.Character ~= Character then
-						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
-								Character.Humanoid.AutoRotate = false
-								Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.25)
-							end
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
-								Item.Handle.CFrame = v.Character.Head.CFrame
-								if math.random(1,11) == 1 then
-									Item:Activate()
-								end
-								break
-							end
-						end
-					end
-				end
-			end
-		else
-			Character:FindFirstChildOfClass("Humanoid"):EquipTool(game.Players.LocalPlayer.Backpack:FindFirstChildOfClass("Tool"))
-		end
-	else
-		local Item = Character:FindFirstChildOfClass("Tool")
-		if Item and not KillAura then
-			Item.Handle.Material = Enum.Material.Plastic
-		end
-		Character.Humanoid.AutoRotate = true
-	end
-	if Srafe then
-		Character.HumanoidRootPart.Velocity = Vector3.new(Character:FindFirstChildOfClass("Humanoid").MoveDirection.X * Character:FindFirstChildOfClass("Humanoid").WalkSpeed,Character.HumanoidRootPart.Velocity.Y,Character:FindFirstChildOfClass("Humanoid").MoveDirection.Z * Character:FindFirstChildOfClass("Humanoid").WalkSpeed)
-	end
-end)
-
-local Pos = nil
-Player.CharacterAdded:Connect(function(Model)
-	Model:WaitForChild("Humanoid").Died:Connect(function()
-		Pos = Model.Head.CFrame
-	end)
-	if Model ~= FakeCharacter then
-		Character = Model
-		if RespawnPos and Pos ~= nil then
-			Character.HumanoidRootPart.CFrame = Pos
-		end
-		if RecommendedCharacter ~= FakeCharacter then
-			RecommendedCharacter = Character
-		end
-	end
-end)
-
-Character.Humanoid.Health = 0
-
-local FinishedLoading = Notif:Notify("VexiS's Background Scripts has Loaded", 4, "success")
