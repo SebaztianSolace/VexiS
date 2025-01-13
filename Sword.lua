@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "1.2 Alpha",
+	Version = "1.2.1 Alpha",
 }
 
 local Title = "VexiS | " .. _G.Config.Version
@@ -265,9 +265,15 @@ local KillAura = false
 local LoopKill = false
 local LoopKillAll = false
 local VesiXT = false
+local AutoGG = false
 
 local TargetUser = ""
 local TargetPlayerIs = nil
+
+
+local KillAuraMethod = "None"
+local KillEveryoneMethod = "None"
+
 
 local FakeCharacter = CreateFakeCharacter()
 FakeCharacter.HumanoidRootPart.Anchored = true
@@ -316,7 +322,7 @@ end)
 local ScriptsSection1 = ScriptsTab:NewSection("Movement")
 
 -- WalkSpeed Slider
-local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", " Studs", true, "/", {min = 16, max = 32, default = 16}, function(value)
+local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", " Studs", true, "/", {min = 16, max = 50, default = 16}, function(value)
 	Character.Humanoid.WalkSpeed = value
 end)
 
@@ -483,6 +489,9 @@ OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Detected]<
 		game["Run Service"].Heartbeat:Wait()
 	until a > 60
 	Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+	if KillEveryoneMethod == "Play Along" then
+		Character:FindFirstChildOfClass("Humanoid"):TakeDamage(1200)
+	end
 	for i,v in pairs(game.Players:GetChildren()) do
 		if v ~= Player then
 			local c = v.Character::Model
@@ -516,10 +525,31 @@ end)
 
 local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
 
---[[ Settings Tab
+-- Settings Tab
 local SettingTab = Init:NewTab("Settings")
 local SettingsSection = SettingTab:NewSection("Settings")
-]]
+
+
+--[[SettingTab:NewSelector("Kill Aura Method","None",{"None","Srict"},function(Value)
+	print(Value)
+end)]]
+
+SettingTab:NewSelector("Kill Everyone Method","None",{"None","Play Along"},function(Value)
+	KillEveryoneMethod = Value
+end)
+
+-- AutoGG Toggle
+local AutoGGToggle = ModsTab:NewToggle("Auto GG [CS]", false, function(value)
+	AutoGG = value
+end)
+
+
+local msg_gg = {
+	"Good game, For me, You suck majorly, ",
+	"Why are you even here in the first place? Im better than you, ",
+	"Honestly, Get Good ",
+	"Really? Thats how you play? My dad could do better, "
+}
 
 
 Notif:Notify("<font color='#8A2BE2'>VexiS</font> Visual's has successfully loaded!", 4, "success")
@@ -556,8 +586,6 @@ game["Run Service"].RenderStepped:Connect(function()
 				if c:FindFirstChild("Head") then
 					c.Head.Anchored = true
 					c.Head.CFrame = tarcf
-				else
-					Notif:Notify("Cannot Kill " .. v.Name, 4, "alert")
 				end
 			end
 		end
@@ -641,6 +669,14 @@ game["Run Service"].Heartbeat:Connect(function()
 							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
 								Item.Handle.CFrame = v.Character.Head.CFrame
 								Item:Activate()
+								if v.Character.Humanoid.Health < 0.01 then
+									local h = math.random(1,#msg_gg)
+									for ii,vv in pairs(msg_gg) do
+										if h == ii then
+											game.Chat:Chat(game.Players.LocalPlayer.Character,vv .. v.DisplayName,Enum.ChatColor.White)
+										end
+									end
+								end
 								attackinghighlight.Parent = v.Character
 								break
 							end
@@ -680,8 +716,16 @@ game["Run Service"].Heartbeat:Connect(function()
 							end
 							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
 								Item.Handle.CFrame = v.Character.Head.CFrame
-								if math.random(1,11) == 1 then
+								if math.random(1,3) == 1 then
 									Item:Activate()
+									if v.Character.Humanoid.Health < 0.01 then
+										local h = math.random(1,#msg_gg)
+										for ii,vv in pairs(msg_gg) do
+											if h == ii then
+												game.Chat:Chat(game.Players.LocalPlayer.Character,vv .. v.DisplayName,Enum.ChatColor.White)
+											end
+										end
+									end
 								end
 								break
 							end
