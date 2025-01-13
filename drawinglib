@@ -1,0 +1,92 @@
+local SebzDrawingLib = {}
+
+function SebzDrawingLib:Draw(Info)
+	-- Ensure PlayerGui exists and the UI container is created
+	local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	local uiContainer = playerGui:FindFirstChild("Sebz-Drawing-UI")
+
+	if not uiContainer then
+		uiContainer = Instance.new("ScreenGui")
+		uiContainer.ResetOnSpawn = false
+		uiContainer.Parent = playerGui
+		uiContainer.Name = "Sebz-Drawing-UI"
+	end
+
+	-- Create the drawing object based on the Info table
+	local obj
+	if Info.Type == "Line" then
+		obj = Instance.new("Frame")
+		obj.BackgroundColor3 = Info.Color or Color3.new(1, 1, 1) -- Default to white if no color is provided
+		obj.AnchorPoint = Vector2.new(0.5, 0.5)
+
+		-- Calculate position and size using WorldToViewportPoint
+		local camera = workspace.CurrentCamera
+		local screenPos1, onScreen1 = camera:WorldToScreenPoint(Info.Position_1.Position)
+		local screenPos2, onScreen2 = camera:WorldToScreenPoint(Info.Position_2.Position)
+
+		local startPos = Vector2.new(screenPos1.X, screenPos1.Y)
+		local endPos = Vector2.new(screenPos2.X, screenPos2.Y)
+		local thickness = Info.Thickness or 2
+
+		local distance = (endPos - startPos).Magnitude
+		local midPoint = (startPos + endPos) / 2
+		local angle = math.deg(math.atan2(endPos.Y - startPos.Y, endPos.X - startPos.X))
+		
+		obj.Position = UDim2.fromOffset(midPoint.X, midPoint.Y)
+		obj.Size = UDim2.fromOffset(distance, thickness)
+		obj.Rotation = angle
+		obj.Visible = true
+
+		obj.BorderSizePixel = 0
+		obj.Parent = uiContainer
+	elseif Info.Type == "Text" then
+		obj = Instance.new("TextLabel")
+		local camera = workspace.CurrentCamera
+		local screenPos1, onScreen1 = camera:WorldToScreenPoint(Info.Position_1.Position)
+		local screenPos2, onScreen2 = camera:WorldToScreenPoint(Info.Position_2.Position)
+		local startPos = Vector2.new(screenPos1.X, screenPos1.Y)
+		local endPos = Vector2.new(screenPos2.X, screenPos2.Y)
+		local distance = (endPos - startPos).Magnitude
+		obj.Text = Info.Text or "Default Text"
+		obj.TextColor3 = Info.Color or Color3.new(1, 1, 1) -- Default to white
+		obj.Font = Enum.Font.SourceSans
+		obj.TextSize = distance
+		obj.TextStrokeTransparency = 0.75
+		obj.AnchorPoint = Vector2.new(0.5, 0.5)
+
+		local camera = workspace.CurrentCamera
+		local screenPos, onScreen = camera:WorldToScreenPoint(Info.Position_1.Position)
+
+		if onScreen then
+			obj.Position = UDim2.fromOffset(screenPos.X, screenPos.Y)
+			obj.Visible = true
+		else
+			obj.Visible = false -- Hide the text if off-screen
+		end
+
+		obj.BackgroundTransparency = 1 -- Make the background transparent
+		obj.Parent = uiContainer
+	end
+
+	-- Return an object wrapper for easy removal and management
+	local objWrapper = {
+		Remove = function()
+			obj:Destroy()
+		end,
+		Object = obj
+	}
+	return objWrapper
+end
+
+function SebzDrawingLib:Clear()
+	-- Clear all drawings from the UI container
+	local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	local uiContainer = playerGui:FindFirstChild("Sebz-Drawing-UI")
+	if uiContainer then
+		for _, v in pairs(uiContainer:GetChildren()) do
+			v:Destroy()
+		end
+	end
+end
+
+return SebzDrawingLib
