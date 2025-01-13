@@ -10,18 +10,22 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "1.2.1 Alpha",
+	Version = "1.3 Alpha",
+	Key = "Test", --Soon maybe 1.0 Beta or 1.6 Alpha...
 }
 
 local Title = "VexiS | " .. _G.Config.Version
 
 local library
+local DrawinLib
 
 
 if game:GetService("RunService"):IsStudio() then
 	library = require(script:WaitForChild("UI"))
+	DrawinLib = require(script:WaitForChild("Drawing"))
 else
 	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/ui.lua"))()
+	DrawinLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/drawinglib"))()
 end
 library.rank = "Free Access"
 
@@ -35,6 +39,99 @@ coroutine.wrap(function()
 		--PingWm:Text("ping: " .. game.Players.LocalPlayer:GetNetworkPing() .. "ms")
 	end
 end)()
+local Lines = {}
+
+-- Function to map health percentage to a color (red -> green)
+local function HealthToColor(healthPercentage)
+	-- Ensure healthPercentage is clamped between 0 and 100
+	healthPercentage = math.clamp(healthPercentage, 0, 100)
+
+	-- Interpolate between red (0) and green (100)
+	if healthPercentage > 50 then
+		-- Green to Orange
+		local greenToOrange = (healthPercentage - 50) / 50
+		return Color3.fromRGB(255 - greenToOrange * 255, 255, 0)
+	else
+		-- Red to Orange
+		local redToOrange = healthPercentage / 50
+		return Color3.fromRGB(255, redToOrange * 165, 0)
+	end
+end
+
+-- Main Esp function for drawing lines and health bars
+function Esp(TarChar)
+	local CurrentPos = TarChar.HumanoidRootPart.CFrame
+
+	-- Health percentage for color interpolation
+	local healthPercentage = TarChar.Humanoid.Health / TarChar.Humanoid.MaxHealth * 100
+	local healthColor = HealthToColor(healthPercentage)
+
+	-- Health line with dynamic color based on health percentage
+	local Health = DrawinLib:Draw({
+		Type = "Line",
+		Color = healthColor,
+		Position_1 = CurrentPos * CFrame.new(-3, TarChar.Humanoid.Health / 100 * 6 - 3, 0),
+		Position_2 = CurrentPos * CFrame.new(-3, -3, 0),
+		Thickness = 5
+	})
+	Lines[#Lines + 1] = Health
+
+	-- White border lines around the character
+	local borderLine1 = DrawinLib:Draw({
+		Type = "Line",
+		Color = Color3.fromRGB(255, 255, 255),
+		Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
+		Position_2 = CurrentPos * CFrame.new(2.5, -3, 0),
+		Thickness = 5
+	})
+	Lines[#Lines + 1] = borderLine1
+
+	local borderLine2 = DrawinLib:Draw({
+		Type = "Line",
+		Color = Color3.fromRGB(255, 255, 255),
+		Position_1 = CurrentPos * CFrame.new(-2.5, 3, 0),
+		Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
+		Thickness = 5
+	})
+	Lines[#Lines + 1] = borderLine2
+
+	local borderLine3 = DrawinLib:Draw({
+		Type = "Line",
+		Color = Color3.fromRGB(255, 255, 255),
+		Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
+		Position_2 = CurrentPos * CFrame.new(-2.5, 3, 0),
+		Thickness = 5
+	})
+	Lines[#Lines + 1] = borderLine3
+
+	local borderLine4 = DrawinLib:Draw({
+		Type = "Line",
+		Color = Color3.fromRGB(255, 255, 255),
+		Position_1 = CurrentPos * CFrame.new(2.5, -3, 0),
+		Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
+		Thickness = 5
+	})
+	Lines[#Lines + 1] = borderLine4
+
+	-- Display the name of the character above the health bar
+	local Text = DrawinLib:Draw({
+		Type = "Text",
+		Color = Color3.fromRGB(255,255,255),
+		Position_1 = CurrentPos * CFrame.new(0, 4.25, 0),
+		Position_2 = CurrentPos * CFrame.new(0, 5, 0),
+		Text = TarChar.Humanoid.DisplayName
+	})
+	Lines[#Lines + 1] = Text
+end
+
+-- Function to reset the ESP (clear all drawn lines)
+function ResetEsp()
+	for _, v in pairs(Lines) do
+		v["Remove"]()
+	end
+	Lines = {} -- Clear the stored lines as well
+end
+
 
 local Notif = library:InitNotifications()
 
@@ -305,7 +402,7 @@ end)
 
 
 -- KillAura Distance Slider
-local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", " Studs", true, "/", {min = 10.0, max = 480.0, default = 12}, function(value)
+local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", " Studs", true, "/", {min = 10.0, max = 240.0, default = 12}, function(value)
 	KillAuraDis = value
 end)
 
@@ -518,12 +615,24 @@ local RespawnToggle = ModsTab:NewToggle("Respawn at Death Point <font color='#FF
 	RespawnPos = value
 end)
 
+-- Esp Toggle
+local VesiXnToggle = ModsTab:NewToggle("Esp <font color='#32CD32'>[Undetected]</font>", false, function(value)
+	EspF = value
+end)
+
 -- VesiX Character Toggle
 local VesiXnToggle = ModsTab:NewToggle("VesiX Skin [Character, Client]", false, function(value)
 	VesiXT = value
 end)
 
+
+
 local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
+
+-- AutoGG Toggle
+local AutoGGToggle = ModsTab:NewToggle("Auto GG [CS]", false, function(value)
+	AutoGG = value
+end)
 
 -- Settings Tab
 local SettingTab = Init:NewTab("Settings")
@@ -538,17 +647,13 @@ SettingTab:NewSelector("Kill Everyone Method","None",{"None","Play Along"},funct
 	KillEveryoneMethod = Value
 end)
 
--- AutoGG Toggle
-local AutoGGToggle = ModsTab:NewToggle("Auto GG [CS]", false, function(value)
-	AutoGG = value
-end)
 
 
 local msg_gg = {
-	"Good game, For me, You suck majorly, ",
+	"Good game For me, For you suck majorly, ",
 	"Why are you even here in the first place? Im better than you, ",
 	"Honestly, Get Good ",
-	"Really? Thats how you play? My dad could do better, "
+	"Really? Thats how you play? My grandma could do better, "
 }
 
 
@@ -576,7 +681,6 @@ swordbotpart.Material = Enum.Material.ForceField
 swordbotpart.Color = Color3.fromRGB(255,0,0)
 swordbotpart.Anchored = true
 swordbotpart.CastShadow = false
-
 
 game["Run Service"].RenderStepped:Connect(function()
 	if LoopKillAll then
@@ -748,6 +852,24 @@ game["Run Service"].Heartbeat:Connect(function()
 		Character.HumanoidRootPart.Velocity = Vector3.new(Character:FindFirstChildOfClass("Humanoid").MoveDirection.X * Character:FindFirstChildOfClass("Humanoid").WalkSpeed,Character.HumanoidRootPart.Velocity.Y,Character:FindFirstChildOfClass("Humanoid").MoveDirection.Z * Character:FindFirstChildOfClass("Humanoid").WalkSpeed)
 	end
 end)
+
+coroutine.wrap(function()
+	while true do
+		if EspF then
+			for i,v in pairs(game.Players:GetChildren()) do
+				if v ~= Player then
+					if v.Character:FindFirstChild("HumanoidRootPart") then
+						Esp(v.Character)
+					end
+				end
+			end
+		end
+		task.wait()
+		if EspF then
+			ResetEsp()
+		end
+	end
+end)()
 
 local Pos = Character.HumanoidRootPart.CFrame
 Player.CharacterAdded:Connect(function(Model)
