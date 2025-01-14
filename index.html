@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VexiS</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0c1d;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1rem;
+        }
+
+        .main {
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .main h1 {
+            font-size: 3rem;
+            color: #9b5df7;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .main p {
+            margin: 1rem auto;
+            font-size: 1.2rem;
+            max-width: 600px;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            margin: 1rem;
+            border: 2px solid #9b5df7;
+            border-radius: 50px;
+            color: #fff;
+            text-decoration: none;
+            background: transparent;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #9b5df7;
+            color: #fff;
+        }
+
+        /* Floating squares */
+        .animated-square {
+            position: absolute;
+            background: rgba(155, 93, 247, 0.3);
+            border-radius: 5px;
+            animation: floatSquares linear infinite;
+        }
+
+        .square-small {
+            width: 20px;
+            height: 20px;
+            animation-duration: 6s;
+        }
+
+        .square-medium {
+            width: 40px;
+            height: 40px;
+            animation-duration: 8s;
+        }
+
+        .square-large {
+            width: 60px;
+            height: 60px;
+            animation-duration: 10s;
+        }
+
+        @keyframes floatSquares {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(100vw, -100vh);
+            }
+        }
+
+        /* Feature cards */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .feature-card {
+            background: #1b1a2d;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: scale(1);
+            transition: 0.3s;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(155, 93, 247, 0.5);
+        }
+
+        .feature-card h3 {
+            color: #9b5df7;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">VexiS</div>
+        <div>
+            <a href="index">Home</a>
+            <a href="games">Supported Games</a>
+            <a href="Loadstring">Script</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <h1>Revolutionizing the Future of Exploiting</h1>
+        <p>A premium experience embedded with the latest technologies to enhance your exploiting experience to the next level.</p>
+        <a href="Loadstring" class="btn">Loadstring</a>
+        <a href="https://discord.gg/BpEzspvqfB" class="btn">Discord</a>
+    </div>
+
+    <!-- Animated squares -->
+    <div class="animated-square square-small" style="top: 20%; left: 10%;"></div>
+    <div class="animated-square square-medium" style="top: 40%; left: 30%;"></div>
+    <div class="animated-square square-large" style="top: 70%; left: 80%;"></div>
+
+   <!-- Features section -->
+<div class="features">
+    <div class="feature-card">
+        <h3>Advanced Anti-Cheat Bypass</h3>
+        <p>VexiS utilizes cutting-edge techniques to stay ahead of anti-cheats, ensuring a seamless and secure experience with every update.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Consistent Updates</h3>
+        <p>Regular updates, ranging from daily to weekly, keep VexiS optimized and undetected, thanks to the tireless effort of our dedicated developer.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Uncompromising Security</h3>
+        <p>Built with robust, high-level coding practices, VexiS offers zero detection rates, ensuring your safety while occasionally adjusting module compatibility.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Completely Free</h3>
+        <p>Experience premium quality without any costs. VexiS is and always will be entirely free, with no hidden fees or charges.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Lag-Free Performance</h3>
+        <p>Enjoy optimized performance with zero memory leaks, as VexiS ensures smooth execution and unmatched reliability.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Cross-Platform Compatibility</h3>
+        <p>VexiS works seamlessly across all devices including iOS, Android, and PCs, providing the same exceptional experience on any platform.</p>
+    </div>
+</div>
+
+</body>
+</html>
