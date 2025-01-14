@@ -10,7 +10,7 @@ AnimateClone.Parent = game
 
 
 _G.Config = {
-	Version = "1.3 Alpha",
+	Version = "1.4 Alpha",
 	Key = "Test", --Soon maybe 1.0 Beta or 1.6 Alpha...
 }
 
@@ -60,68 +60,81 @@ end
 
 -- Main Esp function for drawing lines and health bars
 function Esp(TarChar)
-	local CurrentPos = TarChar.HumanoidRootPart.CFrame
+	if TarChar:FindFirstChild("HumanoidRootPart") then
+		local CurrentPos = TarChar.HumanoidRootPart.CFrame
 
-	-- Health percentage for color interpolation
-	local healthPercentage = TarChar.Humanoid.Health / TarChar.Humanoid.MaxHealth * 100
-	local healthColor = HealthToColor(healthPercentage)
+		-- Health percentage for color interpolation
+		local healthPercentage = TarChar.Humanoid.Health / TarChar.Humanoid.MaxHealth * 100
+		local healthColor = HealthToColor(healthPercentage)
 
-	-- Health line with dynamic color based on health percentage
-	local Health = DrawinLib:Draw({
-		Type = "Line",
-		Color = healthColor,
-		Position_1 = CurrentPos * CFrame.new(-3, TarChar.Humanoid.Health / 100 * 6 - 3, 0),
-		Position_2 = CurrentPos * CFrame.new(-3, -3, 0),
-		Thickness = 5
-	})
-	Lines[#Lines + 1] = Health
+		-- Health line with dynamic color based on health percentage
+		local Health = DrawinLib:Draw({
+			Type = "Line",
+			Color = healthColor,
+			Position_1 = CurrentPos * CFrame.new(-3, TarChar.Humanoid.Health / 100 * 6 - 3, 0),
+			Position_2 = CurrentPos * CFrame.new(-3, -3, 0),
+			Thickness = 5
+		})
+		Lines[#Lines + 1] = Health
 
-	-- White border lines around the character
-	local borderLine1 = DrawinLib:Draw({
-		Type = "Line",
-		Color = Color3.fromRGB(255, 255, 255),
-		Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
-		Position_2 = CurrentPos * CFrame.new(2.5, -3, 0),
-		Thickness = 5
-	})
-	Lines[#Lines + 1] = borderLine1
+		-- Display the Health
+		local Text = DrawinLib:Draw({
+			Type = "Text",
+			Color = healthColor,
+			Position_1 = CurrentPos * CFrame.new(-4.15, 0, 0),
+			Position_2 = CurrentPos * CFrame.new(-4.15, 0.4, 0),
+			Text = tostring(math.round(healthPercentage)) .. "%"
+		})
+		Lines[#Lines + 1] = Text
+		
+		-- White border lines around the character
+		local borderLine1 = DrawinLib:Draw({
+			Type = "Line",
+			Color = Color3.fromRGB(255, 255, 255),
+			Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
+			Position_2 = CurrentPos * CFrame.new(2.5, -3, 0),
+			Thickness = 5
+		})
+		Lines[#Lines + 1] = borderLine1
 
-	local borderLine2 = DrawinLib:Draw({
-		Type = "Line",
-		Color = Color3.fromRGB(255, 255, 255),
-		Position_1 = CurrentPos * CFrame.new(-2.5, 3, 0),
-		Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
-		Thickness = 5
-	})
-	Lines[#Lines + 1] = borderLine2
+		local borderLine2 = DrawinLib:Draw({
+			Type = "Line",
+			Color = Color3.fromRGB(255, 255, 255),
+			Position_1 = CurrentPos * CFrame.new(-2.5, 3, 0),
+			Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
+			Thickness = 5
+		})
+		Lines[#Lines + 1] = borderLine2
 
-	local borderLine3 = DrawinLib:Draw({
-		Type = "Line",
-		Color = Color3.fromRGB(255, 255, 255),
-		Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
-		Position_2 = CurrentPos * CFrame.new(-2.5, 3, 0),
-		Thickness = 5
-	})
-	Lines[#Lines + 1] = borderLine3
+		local borderLine3 = DrawinLib:Draw({
+			Type = "Line",
+			Color = Color3.fromRGB(255, 255, 255),
+			Position_1 = CurrentPos * CFrame.new(2.5, 3, 0),
+			Position_2 = CurrentPos * CFrame.new(-2.5, 3, 0),
+			Thickness = 5
+		})
+		Lines[#Lines + 1] = borderLine3
 
-	local borderLine4 = DrawinLib:Draw({
-		Type = "Line",
-		Color = Color3.fromRGB(255, 255, 255),
-		Position_1 = CurrentPos * CFrame.new(2.5, -3, 0),
-		Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
-		Thickness = 5
-	})
-	Lines[#Lines + 1] = borderLine4
+		local borderLine4 = DrawinLib:Draw({
+			Type = "Line",
+			Color = Color3.fromRGB(255, 255, 255),
+			Position_1 = CurrentPos * CFrame.new(2.5, -3, 0),
+			Position_2 = CurrentPos * CFrame.new(-2.5, -3, 0),
+			Thickness = 5
+		})
+		Lines[#Lines + 1] = borderLine4
 
-	-- Display the name of the character above the health bar
-	local Text = DrawinLib:Draw({
-		Type = "Text",
-		Color = Color3.fromRGB(255,255,255),
-		Position_1 = CurrentPos * CFrame.new(0, 4.25, 0),
-		Position_2 = CurrentPos * CFrame.new(0, 5, 0),
-		Text = TarChar.Humanoid.DisplayName
-	})
-	Lines[#Lines + 1] = Text
+		-- Display the name of the character above the health bar
+		local Text = DrawinLib:Draw({
+			Type = "Text",
+			Color = Color3.fromRGB(255,255,255),
+			Position_1 = CurrentPos * CFrame.new(0, 4.35, 0),
+			Position_2 = CurrentPos * CFrame.new(0, 5, 0),
+			Text = TarChar.Humanoid.DisplayName
+		})
+		Lines[#Lines + 1] = Text
+		
+	end
 end
 
 -- Function to reset the ESP (clear all drawn lines)
@@ -362,7 +375,7 @@ local KillAura = false
 local LoopKill = false
 local LoopKillAll = false
 local VesiXT = false
-local AutoGG = false
+local StreamerMode = false
 
 local TargetUser = ""
 local TargetPlayerIs = nil
@@ -396,7 +409,7 @@ Rich Text Formatting Guide:
 
 
 -- KillAura Toggle
-local KillAuraToggle = ScriptsTab:NewToggle('KillAura <font color="#8A2BE2">[Traceable]</font>', false, function(value)
+local KillAuraToggle = ScriptsTab:NewToggle('<b>KillAura</b> <font color="#32CD32">[Undetected]</font>', false, function(value)
 	KillAura = value
 end)
 
@@ -407,7 +420,7 @@ local KillAuraSlider = ScriptsTab:NewSlider("KillAura Distance", " Studs", true,
 end)
 
 -- SwordBot Toggle
-local SwordBotToggle = ScriptsTab:NewToggle("SwordBot <font color='#32CD32'>[Undetected]</font>", false, function(value)
+local SwordBotToggle = ScriptsTab:NewToggle("<b>SwordBot</b> <font color='#32CD32'>[Undetected]</font>", false, function(value)
 	SwordBot = value
 end)
 
@@ -419,12 +432,12 @@ end)
 local ScriptsSection1 = ScriptsTab:NewSection("Movement")
 
 -- WalkSpeed Slider
-local WalkSpeedSlider = ScriptsTab:NewSlider("WalkSpeed <font color='#FFA500'>[Noticeable]</font>", " Studs", true, "/", {min = 16, max = 50, default = 16}, function(value)
+local WalkSpeedSlider = ScriptsTab:NewSlider("<b>WalkSpeed</b> <font color='#FFA500'>[Noticeable]</font>", " Studs", true, "/", {min = 16, max = 50, default = 16}, function(value)
 	Character.Humanoid.WalkSpeed = value
 end)
 
 -- Strafe Toggle
-local SrafeToggle = ScriptsTab:NewToggle("Strafe <font color='#32CD32'>[Undetected]</font>", false, function(value)
+local SrafeToggle = ScriptsTab:NewToggle("<b>Strafe</b> <font color='#32CD32'>[Undetected]</font>", false, function(value)
 	Srafe = value
 end)
 -- Overpowered Tab
@@ -442,7 +455,7 @@ OverpoweredTab:NewTextbox("Target User", "", "Display Name Or User Name", "all",
 	warn(value)
 end)
 -- Fling User Button
-OverpoweredTab:NewButton("<b>Fling User</b> <font color='#FFA500'>[Detected]</font>", function(value)
+OverpoweredTab:NewButton("<b>Fling User</b> <font color='#FF0000'>[Bannable]</font>", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
 		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
@@ -518,7 +531,7 @@ OverpoweredTab:NewButton("<b>Banish/Void User</b> <font color='#FFA500'>[Detecte
 end)
 
 -- Kill User Button
-OverpoweredTab:NewButton("<b>Kill User</b> <font color='#FFA500'>[Detected?]</font>", function(value)
+OverpoweredTab:NewButton("<b>Kill User</b> <font color='#FFA500'>[Noticeable]</font>", function(value)
 	local FoundUser = false
 	for i,v in pairs(game.Players:GetChildren()) do
 		if string.lower(v.Name) == string.lower(TargetUser) or string.lower(v.DisplayName) == string.lower(TargetUser) then
@@ -559,7 +572,7 @@ end)
 local BlankLabel = OverpoweredTab:NewLabel("-------", "middle")
 
 -- Banish/Void User Button
-OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Detected]</font>", function(value)
+OverpoweredTab:NewButton("<b>Kill Everyone</b> <font color='#FFA500'>[Noticeable]</font>", function(value)
 	for i,v in pairs(game.Players:GetChildren()) do
 		if v ~= Player then
 			local c = v.Character::Model
@@ -629,11 +642,6 @@ end)
 
 local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
 
--- AutoGG Toggle
-local AutoGGToggle = ModsTab:NewToggle("Auto GG [CS]", false, function(value)
-	AutoGG = value
-end)
-
 -- Settings Tab
 local SettingTab = Init:NewTab("Settings")
 local SettingsSection = SettingTab:NewSection("Settings")
@@ -647,7 +655,14 @@ SettingTab:NewSelector("Kill Everyone Method","None",{"None","Play Along"},funct
 	KillEveryoneMethod = Value
 end)
 
+-- Streamer Mode Toggle
+local StreamerModeToggle = SettingTab:NewToggle("Streamer Mode [Client]", false, function(value)
+	StreamerMode = value
+end)
 
+local idk = SettingTab:NewLabel("Streamer Mode Hides the watermark, and hiding anything else that will show that your hacking", "left")
+local idk = SettingTab:NewLabel("KillAura will not change with Streamer mode, SwordBot Will though.", "left")
+local idk = SettingTab:NewLabel("Best is recommended is SwordBot with 13 Studs, and Walkspeed 18 and Srafe.", "left")
 
 local msg_gg = {
 	"Good game For me, For you suck majorly, ",
@@ -683,6 +698,11 @@ swordbotpart.Anchored = true
 swordbotpart.CastShadow = false
 
 game["Run Service"].RenderStepped:Connect(function()
+	if StreamerMode then
+		swordbotpart.Transparency = 1
+	else
+		swordbotpart.Transparency = 0
+	end
 	if LoopKillAll then
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v ~= Player then
@@ -804,33 +824,31 @@ game["Run Service"].Heartbeat:Connect(function()
 	if SwordBot then
 		local Item = Character:FindFirstChildOfClass("Tool")
 		if Item then
-			Item.Handle.Material = Enum.Material.ForceField
-			Item.Handle.Color = Color3.fromRGB(176, 156, 255)
+			if not StreamerMode then
+				Item.Handle.Material = Enum.Material.ForceField
+				Item.Handle.Color = Color3.fromRGB(176, 156, 255)
+				Item.Handle:BreakJoints()
+				Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
+				Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
+			end
 			Character.Humanoid.AutoRotate = true
-			Item.Handle:BreakJoints()
-			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
-			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
 			for i,v in pairs(game.Players:GetChildren()) do
 				if v:IsA("Player") then
 					if v.Character ~= Character then
 						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
 							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
-								Character.Humanoid.AutoRotate = false
-								Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.25)
+								if not StreamerMode then
+									Character.Humanoid.AutoRotate = false
+									Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.1)
+								end	
 							end
 							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
-								Item.Handle.CFrame = v.Character.Head.CFrame
-								if math.random(1,3) == 1 then
-									Item:Activate()
-									if v.Character.Humanoid.Health < 0.01 then
-										local h = math.random(1,#msg_gg)
-										for ii,vv in pairs(msg_gg) do
-											if h == ii then
-												game.Chat:Chat(game.Players.LocalPlayer.Character,vv .. v.DisplayName,Enum.ChatColor.White)
-											end
-										end
-									end
+								if StreamerMode then
+									v.Character.HumanoidRootPart.Position = Item.Handle.Position 
+								else
+									Item.Handle.CFrame = v.Character.Head.CFrame
 								end
+								Item:Activate()
 								break
 							end
 						end
