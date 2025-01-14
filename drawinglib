@@ -35,7 +35,11 @@ function SebzDrawingLib:Draw(Info)
 		obj.Position = UDim2.fromOffset(midPoint.X, midPoint.Y)
 		obj.Size = UDim2.fromOffset(distance, thickness)
 		obj.Rotation = angle
-		obj.Visible = true
+		if onScreen1 or onScreen2 then
+			obj.Visible = true
+		else
+			obj.Visible = false
+		end
 
 		obj.BorderSizePixel = 0
 		obj.Parent = uiContainer
