@@ -1,6 +1,6 @@
 -- VexiS cheeze --
 
-local GamName = "sword" --This is just for me know what script is which.
+local GamName = "sword fighting" --This is just for me know what script is which.
 
 local Player = game.Players.LocalPlayer
 local Character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
@@ -9,33 +9,33 @@ AnimateClone.Enabled = false
 AnimateClone.Parent = game
 
 
-_G.Config = {
-	Version = "1.4 Alpha",
-	Key = "Test", --Soon maybe 1.0 Beta or 1.6 Alpha...
+local Config = {
+	Version = "1.0 Beta",
+	Key = "VexiS2025_",
 }
 
-local Title = "VexiS | " .. _G.Config.Version
+local Title = "VexiS | " .. Config.Version
 
 local library
 local DrawinLib
 
 
 if game:GetService("RunService"):IsStudio() then
-	library = require(script:WaitForChild("UI"))
-	DrawinLib = require(script:WaitForChild("Drawing"))
+	library = require(game.ReplicatedStorage:WaitForChild("UI"))
+	DrawinLib = require(game.ReplicatedStorage:WaitForChild("Drawing"))
 else
 	library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/ui.lua"))()
 	DrawinLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SebaztianSolace/VexiS/refs/heads/main/drawinglib"))()
 end
-library.rank = "Free Access"
+library.rank = "User"
 
-local Wm = library:Watermark("VexiS | v" .. _G.Config.Version ..  " | " .. library:GetUsername() .. " | Rank: " .. library.rank)
+local Wm = library:Watermark("VexiS | v" .. Config.Version ..  " | " .. library:GetUsername() .. " | Rank: " .. library.rank)
 local FpsWm = Wm:AddWatermark("fps: " .. library.fps)
 --local PingWm = Wm:AddWatermark("ping: " .. game.Players.LocalPlayer:GetNetworkPing() .. "ms")
 coroutine.wrap(function()
 	while wait(.75) do
 		FpsWm:Text("fps: " .. library.fps)
-		Wm:Text("VexiS | v" .. _G.Config.Version ..  " | " .. library:GetUsername() .. " | Rank: " .. library.rank)
+		Wm:Text("VexiS | v" .. Config.Version ..  " | " .. library:GetUsername() .. " | Rank: " .. library.rank)
 		--PingWm:Text("ping: " .. game.Players.LocalPlayer:GetNetworkPing() .. "ms")
 	end
 end)()
@@ -86,7 +86,7 @@ function Esp(TarChar)
 			Text = tostring(math.round(healthPercentage)) .. "%"
 		})
 		Lines[#Lines + 1] = Text
-		
+
 		-- White border lines around the character
 		local borderLine1 = DrawinLib:Draw({
 			Type = "Line",
@@ -133,7 +133,7 @@ function Esp(TarChar)
 			Text = TarChar.Humanoid.DisplayName
 		})
 		Lines[#Lines + 1] = Text
-		
+
 	end
 end
 
@@ -346,14 +346,87 @@ function CreateFakeCharacter()
 	return Model0
 end
 
--- Home Tab
+-- Tabs
+local KeyTab = Init:NewTab("Auth")
+KeyTab:Show()
+
+local key = ""
+
+KeyTab:NewTextbox("Key","","Input Key Here","all","medium",true,true,function(Value)
+	key = Value
+end)
+
+
+
 local HomeTab = Init:NewTab("Home")
+local InsightsTab = Init:NewTab("Insights")
+local ScriptsTab = Init:NewTab("Scripts")
+local OverpoweredTab = Init:NewTab("Overpowered")
+local ModsTab = Init:NewTab("Mods")
+local SettingTab = Init:NewTab("Settings")
+KeyTab:NewButton("Submit",function()
+	if key ~= "" then
+		local data = "Denied"
+		if key == Config.Key then
+			data = "Success"
+		end
+		if data ~= "Denied" then
+			if data == "Success" then
+				Notif:Notify("Key Accepted!",5,"success")
+				HomeTab:Show()
+				InsightsTab:Show()
+				ScriptsTab:Show()
+				OverpoweredTab:Show()
+				ModsTab:Show()
+				SettingTab:Show()
+				
+				KeyTab:Hide()
+			else
+				Notif:Notify("Key Declined!",5,"error")
+				game.Players.LocalPlayer:Kick("Key Declined")
+			end
+		else
+			Notif:Notify("Key Declined!",5,"error")
+			game.Players.LocalPlayer:Kick("Key Declined")
+		end
+	else
+		Notif:Notify("No Key Entered!",5,"error")
+	end
+end)
+HomeTab:Hide()
+InsightsTab:Hide()
+ScriptsTab:Hide()
+OverpoweredTab:Hide()
+ModsTab:Hide()
+SettingTab:Hide()
+
+function ExecutorRequest()
+	if request then
+		local response = request({
+			Url = "https://httpbin.org/user-agent",
+			Method = "GET",
+		})
+		assert(type(response) == "table", "Response must be a table")
+		assert(response.StatusCode == 200, "Did not return a 200 status code")
+		local data = game:GetService("HttpService"):JSONDecode(response.Body)
+		assert(type(data) == "table" and type(data["user-agent"]) == "string", "Did not return a table with a user-agent key")
+		return data["user-agent"]
+	else
+		if game["Run Service"]:IsStudio() then
+			return "Roblox Studio [LocalScript]"
+		else
+			return "Unknown"
+		end
+	end
+end
+
 local HomeSection = HomeTab:NewSection("Dashboard")
 local Label1 = HomeTab:NewLabel("Welcome to VexiS! " .. game.Players.LocalPlayer.DisplayName, "left")
 local Label2 = HomeTab:NewLabel("Enjoy using this UI. I’ve put a lot of work into this.", "left")
 local Label3 = HomeTab:NewLabel("Rank: " .. library.rank, "left")
+local Label35 = HomeTab:NewLabel("Game: " .. GamName)
+local Label4 = HomeTab:NewLabel("Executor: " .. ExecutorRequest())
 
-local InsightsTab = Init:NewTab("Insights")
 local InsightsSection = InsightsTab:NewSection("Detection Insights")
 local TraceableLabel = InsightsTab:NewLabel("<b>Traceable</b> <font color='#800080'>[Traceable]</font> - A mix between Detected and Bannable. They will find out who is doing that.", "left")
 local DetectedLabel = InsightsTab:NewLabel("<b>Detected</b> <font color='#FFA500'>[Detected]</font> - People will notice, and if there's an anti-cheat, it will most likely detect you.", "left")
@@ -375,6 +448,7 @@ local KillAura = false
 local LoopKill = false
 local LoopKillAll = false
 local VesiXT = false
+local ZV = false
 local StreamerMode = false
 
 local TargetUser = ""
@@ -392,7 +466,6 @@ AnimateClone.Parent = FakeCharacter
 local RecommendedCharacter = FakeCharacter
 
 -- Scripts Tab
-local ScriptsTab = Init:NewTab("Scripts")
 local ScriptsSection = ScriptsTab:NewSection("Combat")
 
 
@@ -406,6 +479,11 @@ Rich Text Formatting Guide:
 - **Noticeable** (Future Orange): <font color='#FFA500'>[Noticeable]</font>
 - **Undetected** (Future Green): <font color='#32CD32'>[Undetected]</font>
 ]]
+
+local ESP = {
+	On = false,
+	ShowDummys = true,	
+}
 
 
 -- KillAura Toggle
@@ -425,7 +503,7 @@ local SwordBotToggle = ScriptsTab:NewToggle("<b>SwordBot</b> <font color='#32CD3
 end)
 
 -- SwordBot Distance Slider
-local SwordBotSlider = ScriptsTab:NewSlider("SwordBot Distance", "Studs", true, "/", {min = 10.0, max = 25.0, default = 15}, function(value)
+local SwordBotSlider = ScriptsTab:NewSlider("SwordBot Distance", " Studs", true, "/", {min = 10.0, max = 25.0, default = 15}, function(value)
 	SwordBotDis = value
 end)
 
@@ -440,8 +518,19 @@ end)
 local SrafeToggle = ScriptsTab:NewToggle("<b>Strafe</b> <font color='#32CD32'>[Undetected]</font>", false, function(value)
 	Srafe = value
 end)
+
+
+
+local ScriptsSection2 = ScriptsTab:NewSection("Client")
+
+
+-- Esp Toggle
+local VesiXnToggle = ScriptsTab:NewToggle("Esp <font color='#32CD32'>[Undetected]</font>", false, function(value)
+	ESP.On = value
+end)
+
+
 -- Overpowered Tab
-local OverpoweredTab = Init:NewTab("Overpowered")
 local OverpoweredSection = OverpoweredTab:NewSection("Players")
 
 OverpoweredTab:NewTextbox("Target User", "", "Display Name Or User Name", "all", "medium", true, true, function(value)
@@ -620,7 +709,6 @@ end)
 
 
 -- Mods Tab
-local ModsTab = Init:NewTab("Mods")
 local ModsSection = ModsTab:NewSection("Character")
 
 -- Respawn Toggle
@@ -628,10 +716,7 @@ local RespawnToggle = ModsTab:NewToggle("Respawn at Death Point <font color='#FF
 	RespawnPos = value
 end)
 
--- Esp Toggle
-local VesiXnToggle = ModsTab:NewToggle("Esp <font color='#32CD32'>[Undetected]</font>", false, function(value)
-	EspF = value
-end)
+local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
 
 -- VesiX Character Toggle
 local VesiXnToggle = ModsTab:NewToggle("VesiX Skin [Character, Client]", false, function(value)
@@ -639,11 +724,13 @@ local VesiXnToggle = ModsTab:NewToggle("VesiX Skin [Character, Client]", false, 
 end)
 
 
+-- VesiX Character Toggle
+local ZeroVelocityToggle = ModsTab:NewToggle("Removes extra sword swing velocity <font color='#32CD32'>[Undetected]</font>", false, function(value)
+	ZV = value
+end)
 
-local idk = ModsTab:NewLabel("Turning off VesiX Skin, Requires a reset.", "left")
 
 -- Settings Tab
-local SettingTab = Init:NewTab("Settings")
 local SettingsSection = SettingTab:NewSection("Settings")
 
 
@@ -658,19 +745,21 @@ end)
 -- Streamer Mode Toggle
 local StreamerModeToggle = SettingTab:NewToggle("Streamer Mode [Client]", false, function(value)
 	StreamerMode = value
+	if value == true then
+		Wm:Hide()
+		FpsWm:Hide()
+	else
+		Wm:Show()
+		FpsWm:Show()
+	end
 end)
 
 local idk = SettingTab:NewLabel("Streamer Mode Hides the watermark, and hiding anything else that will show that your hacking", "left")
 local idk = SettingTab:NewLabel("KillAura will not change with Streamer mode, SwordBot Will though.", "left")
-local idk = SettingTab:NewLabel("Best is recommended is SwordBot with 13 Studs, and Walkspeed 18 and Srafe.", "left")
 
-local msg_gg = {
-	"Good game For me, For you suck majorly, ",
-	"Why are you even here in the first place? Im better than you, ",
-	"Honestly, Get Good ",
-	"Really? Thats how you play? My grandma could do better, "
-}
-
+local ShowNonPlayerESPToggle = SettingTab:NewToggle("Use Scripts on Non Player Rigs [Like ESP, Killaura]", true, function(value)
+	ESP.ShowDummys = value
+end)
 
 Notif:Notify("<font color='#8A2BE2'>VexiS</font> Visual's has successfully loaded!", 4, "success")
 
@@ -698,6 +787,13 @@ swordbotpart.Anchored = true
 swordbotpart.CastShadow = false
 
 game["Run Service"].RenderStepped:Connect(function()
+	if ZV then
+		if Character then
+			if Character:FindFirstChild("HumanoidRootPart") and Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("BodyVelocity") then
+				Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("BodyVelocity"):Destroy()
+			end
+		end
+	end
 	if StreamerMode then
 		swordbotpart.Transparency = 1
 	else
@@ -786,23 +882,30 @@ game["Run Service"].Heartbeat:Connect(function()
 			Item.Handle:BreakJoints()
 			Item.Handle.Velocity = Vector3.new(math.random(-50,50),-350,math.random(-50,50))
 			Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
-			for i,v in pairs(game.Players:GetChildren()) do
-				if v:IsA("Player") then
-					if v.Character ~= Character then
-						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
-								Item.Handle.CFrame = v.Character.Head.CFrame
+			if ESP.ShowDummys then
+				for i,v in pairs(game.Workspace:GetChildren()) do
+					if v ~= Player.Character then
+						if v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health ~= 0 then
+							if (v.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
+								Item.Handle.CFrame = v.Head.CFrame
 								Item:Activate()
-								if v.Character.Humanoid.Health < 0.01 then
-									local h = math.random(1,#msg_gg)
-									for ii,vv in pairs(msg_gg) do
-										if h == ii then
-											game.Chat:Chat(game.Players.LocalPlayer.Character,vv .. v.DisplayName,Enum.ChatColor.White)
-										end
-									end
-								end
-								attackinghighlight.Parent = v.Character
+								attackinghighlight.Parent = v
 								break
+							end
+						end
+					end
+				end
+			else
+				for i,v in pairs(game.Players:GetChildren()) do
+					if v:IsA("Player") then
+						if v.Character ~= Character then
+							if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
+								if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= KillAuraDis / 2 then
+									Item.Handle.CFrame = v.Character.Head.CFrame
+									Item:Activate()
+									attackinghighlight.Parent = v.Character
+									break
+								end
 							end
 						end
 					end
@@ -832,24 +935,48 @@ game["Run Service"].Heartbeat:Connect(function()
 				Item.Handle.CFrame = Character.Head.CFrame * CFrame.new(0,math.sin(tick() * 2) / 2.5 + 3.5,0) * CFrame.Angles(0,math.rad(math.cos(tick())*180),0)
 			end
 			Character.Humanoid.AutoRotate = true
-			for i,v in pairs(game.Players:GetChildren()) do
-				if v:IsA("Player") then
-					if v.Character ~= Character then
-						if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
+			if ESP.ShowDummys then
+				for i,v in pairs(game.Workspace:GetChildren()) do
+					if v ~= Character then
+						if v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health ~= 0 then
+							if (v.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
 								if not StreamerMode then
 									Character.Humanoid.AutoRotate = false
-									Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.1)
+									Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.HumanoidRootPart.Position,v.HumanoidRootPart.CFrame.UpVector),0.1)
 								end	
 							end
-							if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
+							if (v.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
 								if StreamerMode then
-									v.Character.HumanoidRootPart.Position = Item.Handle.Position 
+									v.HumanoidRootPart.Position = Item.Handle.Position 
 								else
-									Item.Handle.CFrame = v.Character.Head.CFrame
+									Item.Handle.CFrame = v.Head.CFrame
 								end
 								Item:Activate()
 								break
+							end
+						end
+					end
+				end
+			else
+				for i,v in pairs(game.Players:GetChildren()) do
+					if v:IsA("Player") then
+						if v.Character ~= Character then
+							if v.Character:FindFirstChild("HumanoidRootPart") and v.Character.Humanoid.Health ~= 0 then
+								if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis + 2 then
+									if not StreamerMode then
+										Character.Humanoid.AutoRotate = false
+										Character.HumanoidRootPart.CFrame = Character.HumanoidRootPart.CFrame:Lerp(CFrame.lookAt(Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.Position,v.Character.HumanoidRootPart.CFrame.UpVector),0.1)
+									end	
+								end
+								if (v.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).Magnitude <= SwordBotDis / 2 then
+									if StreamerMode then
+										v.Character.HumanoidRootPart.Position = Item.Handle.Position 
+									else
+										Item.Handle.CFrame = v.Character.Head.CFrame
+									end
+									Item:Activate()
+									break
+								end
 							end
 						end
 					end
@@ -873,19 +1000,27 @@ end)
 
 coroutine.wrap(function()
 	while true do
-		if EspF then
-			for i,v in pairs(game.Players:GetChildren()) do
-				if v ~= Player then
-					if v.Character:FindFirstChild("HumanoidRootPart") then
-						Esp(v.Character)
+		if ESP.On then
+			if ESP.ShowDummys then
+				for i,v in pairs(game.Workspace:GetChildren()) do
+					if v ~= Player.Character then
+						if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") then
+							Esp(v)
+						end
+					end
+				end
+			else
+				for i,v in pairs(game.Players:GetChildren()) do
+					if v ~= Player then
+						if v.Character:FindFirstChild("HumanoidRootPart") then
+							Esp(v.Character)
+						end
 					end
 				end
 			end
 		end
 		task.wait()
-		if EspF then
-			ResetEsp()
-		end
+		ResetEsp()
 	end
 end)()
 
